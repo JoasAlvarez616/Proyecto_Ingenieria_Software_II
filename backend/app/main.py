@@ -9,6 +9,7 @@ from app.routers.rooms import router as rooms_routers
 from app.routers.clients import router as clients_routers
 from app.routers.reservations import router as reservations_router
 from app.routers.payments import router as payments_router
+from app.routers.reports import router as reports_router
 
 
 
@@ -67,3 +68,4 @@ app.include_router(rooms_routers)
 app.include_router(clients_routers)
 app.include_router(reservations_router)
 app.include_router(payments_router)
+app.include_router(reports_router)

@@ -94,3 +94,20 @@ async def delete_client(client_id: int, db: Session = Depends(get_db)):
     cliente.activo = False
     db.commit()
     return {"mensaje": f"Cliente {cliente.nombre_completo} desactivado correctamente"}
+
+
+#Reactivar un cliente
+@router.patch("/{client_id}/reactivar", response_model=ClientResponse)
+async def reactivate_client(client_id: int, db: Session = Depends(get_db)):
+    """Reactivar un cliente previamente desactivado (soft delete)."""
+    cliente = db.query(Client).filter(Client.id == client_id).first()
+    if not cliente:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cliente no encontrado"
+        )
+    
+    cliente.activo = True
+    db.commit()
+    db.refresh(cliente)
+    return cliente

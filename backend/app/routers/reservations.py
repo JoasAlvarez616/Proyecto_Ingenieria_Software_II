@@ -242,3 +242,4 @@ async def cancel_reservation(reservation_id: int, db: Session = Depends(get_db))
     db.commit()
     db.refresh(reserva)
     return reserva
+

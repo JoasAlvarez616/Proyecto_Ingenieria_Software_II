@@ -41,12 +41,18 @@ def verificar_disponibilidad(
 
 # ── Endpoints ─────────────────────────────────────────────────
 
+from app.schemas.pagination import PaginatedResponse
+import math
+
 # Obtener todas las reservas
-@router.get("/", response_model=list[ReservationSummary])
+@router.get("/", response_model=PaginatedResponse[ReservationSummary])
 async def get_reservations(
     estado: Optional[str] = None,
     cliente_id: Optional[int] = None,
     habitacion_id: Optional[int] = None,
+    page: int = 1,
+    limit: int = 10,
+    search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     query = db.query(Reservation)
@@ -56,7 +62,29 @@ async def get_reservations(
         query = query.filter(Reservation.cliente_id == cliente_id)
     if habitacion_id:
         query = query.filter(Reservation.habitacion_id == habitacion_id)
-    return query.order_by(Reservation.fecha_entrada.desc()).all()
+        
+    if search:
+        search_term = f"%{search}%"
+        query = query.join(Client).filter(
+            or_(
+                Client.nombre_completo.ilike(search_term),
+                Client.numero_documento.ilike(search_term)
+            )
+        )
+        
+    total = query.count()
+    total_pages = math.ceil(total / limit) if limit > 0 else 0
+    
+    skip = (page - 1) * limit
+    data = query.order_by(Reservation.fecha_entrada.desc()).offset(skip).limit(limit).all()
+    
+    return {
+        "data": data,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": total_pages
+    }
 
 
 # Obtener una reserva por ID

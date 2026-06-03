@@ -15,6 +15,8 @@ class Client(Base):
     email = Column(String(100), nullable=True)
     direccion = Column(String(200), nullable=True)
     activo = Column(Boolean, default=True)
+    es_extranjero = Column(Boolean, default=False, nullable=False)
+    pais = Column(String(50), default="Colombia", nullable=False)
 
     # Timestamps
     creado_en = Column(DateTime(timezone=True), server_default=func.now())

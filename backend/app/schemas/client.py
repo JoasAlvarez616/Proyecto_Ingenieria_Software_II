@@ -11,11 +11,13 @@ class ClientBase(BaseModel):
     telefono: str = Field(..., min_length=7, max_length=20)
     email: Optional[EmailStr] = None
     direccion: Optional[str] = Field(None, max_length=200)
+    es_extranjero: bool = Field(default=False)
+    pais: str = Field(default="Colombia", max_length=50)
 
     @field_validator("tipo_documento")
     @classmethod
     def validar_tipo_documento(cls, v):
-        tipos_validos = ["cedula", "pasaporte"]
+        tipos_validos = ["cedula", "cedula_extranjeria", "pasaporte", "tarjeta_identidad", "rut", "nit", "ppt"]
         if v.lower() not in tipos_validos:
             raise ValueError(f"Tipo de documento debe ser uno de: {tipos_validos}")
         return v.lower()
@@ -55,6 +57,8 @@ class ClientUpdate(BaseModel):
     telefono: Optional[str] = Field(None, min_length=7, max_length=20)
     email: Optional[EmailStr] = None
     direccion: Optional[str] = Field(None, max_length=200)
+    es_extranjero: Optional[bool] = None
+    pais: Optional[str] = Field(None, max_length=50)
     activo: Optional[bool] = None
 
 

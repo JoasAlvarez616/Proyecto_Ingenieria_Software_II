@@ -29,6 +29,3 @@ htmlcov/
 
 #Logs
 *.log
-
-#Carpeta
-frontend

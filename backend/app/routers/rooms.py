@@ -8,12 +8,19 @@ from typing import Optional
 router = APIRouter(prefix="/rooms", tags=["Habitaciones"])
 
 
+from app.schemas.pagination import PaginatedResponse
+import math
+from sqlalchemy import or_
+
 # Obtener todas las habitaciones
-@router.get("/", response_model=list[RoomResponse])
+@router.get("/", response_model=PaginatedResponse[RoomResponse])
 async def get_rooms(
     tipo: Optional[str] = None,
     estado: Optional[str] = None,
     solo_activas: bool = True,
+    page: int = 1,
+    limit: int = 10,
+    search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     query = db.query(Room)
@@ -23,7 +30,29 @@ async def get_rooms(
         query = query.filter(Room.tipo == tipo.lower())
     if estado:
         query = query.filter(Room.estado == estado.lower())
-    return query.all()
+        
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            or_(
+                Room.numero.ilike(search_term),
+                Room.tipo.ilike(search_term)
+            )
+        )
+        
+    total = query.count()
+    total_pages = math.ceil(total / limit) if limit > 0 else 0
+    
+    skip = (page - 1) * limit
+    data = query.order_by(Room.numero.asc()).offset(skip).limit(limit).all()
+    
+    return {
+        "data": data,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": total_pages
+    }
 
 
 # Obtener una habitación por ID

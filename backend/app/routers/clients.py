@@ -8,16 +8,46 @@ from typing import Optional
 router = APIRouter(prefix="/clients", tags=["Clientes"])
 
 
+from sqlalchemy import or_
+import math
+from app.schemas.pagination import PaginatedResponse
+
 # Obtener todos los clientes
-@router.get("/", response_model=list[ClientResponse])
+@router.get("/", response_model=PaginatedResponse[ClientResponse])
 async def get_clients(
     solo_activos: bool = True,
+    page: int = 1,
+    limit: int = 10,
+    search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     query = db.query(Client)
     if solo_activos:
         query = query.filter(Client.activo == True)
-    return query.all()
+        
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            or_(
+                Client.nombre_completo.ilike(search_term),
+                Client.numero_documento.ilike(search_term),
+                Client.email.ilike(search_term)
+            )
+        )
+        
+    total = query.count()
+    total_pages = math.ceil(total / limit) if limit > 0 else 0
+    
+    skip = (page - 1) * limit
+    data = query.offset(skip).limit(limit).all()
+    
+    return {
+        "data": data,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": total_pages
+    }
 
 
 # Buscar cliente por número de documento

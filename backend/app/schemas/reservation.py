@@ -79,8 +79,12 @@ class ReservationSummary(BaseModel):
     fecha_entrada: date
     fecha_salida: date
     numero_noches: int
+    numero_huespedes: int
     costo_total: float
     monto_pagado: float
     estado: str
+    creado_en: datetime
+    actualizado_en: Optional[datetime] = None
+    cancelado_en: Optional[datetime] = None
 
     model_config = {"from_attributes": True}

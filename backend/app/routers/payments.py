@@ -10,6 +10,32 @@ from app.schemas.payment import (
 
 router = APIRouter(prefix="/payments", tags=["Pagos"])
 
+from app.schemas.pagination import PaginatedResponse
+import math
+
+# Obtener todos los pagos
+@router.get("/", response_model=PaginatedResponse[PaymentResponse])
+async def get_all_payments(
+    page: int = 1,
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):
+    query = db.query(Payment)
+    
+    total = query.count()
+    total_pages = math.ceil(total / limit) if limit > 0 else 0
+    
+    skip = (page - 1) * limit
+    data = query.order_by(Payment.fecha_pago.desc()).offset(skip).limit(limit).all()
+    
+    return {
+        "data": data,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": total_pages
+    }
+
 
 # Obtener todos los pagos de una reserva
 @router.get("/reserva/{reserva_id}", response_model=ReservationPaymentStatus)

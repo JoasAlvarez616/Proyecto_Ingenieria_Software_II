@@ -31,4 +31,4 @@ htmlcov/
 *.log
 
 #Carpeta
-frontend
+frontend/

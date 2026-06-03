@@ -28,4 +28,11 @@ ENV/
 htmlcov/
 
 #Logs
+<<<<<<< HEAD
 *.log
+=======
+*.log
+
+#Carpeta
+frontend/
+>>>>>>> 7b8c12b964c260735bbc9716ebd7fb1733314974

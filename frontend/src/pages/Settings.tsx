@@ -369,7 +369,7 @@ export function Settings() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
                 }}>
                   {hotelConfig.logo_url ? (
-                    <img src={`http://localhost:8000${hotelConfig.logo_url}`} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                    <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${hotelConfig.logo_url}`} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
                   ) : (
                     <Hotel size={36} color="var(--text-muted)" />
                   )}

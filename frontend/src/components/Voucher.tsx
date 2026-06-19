@@ -54,7 +54,7 @@ export function Voucher({ type, data, clientName, onClose }: VoucherProps) {
         <div className="voucher-header">
           <div className="voucher-logo-container">
             {hotelConfig.logo_url ? (
-              <img src={`http://localhost:8000${hotelConfig.logo_url}`} alt="Logo" style={{ width: '60px', height: '60px', objectFit: 'contain', marginBottom: '8px' }} />
+              <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${hotelConfig.logo_url}`} alt="Logo" style={{ width: '60px', height: '60px', objectFit: 'contain', marginBottom: '8px' }} />
             ) : (
               <div className="voucher-logo">
                 {hotelConfig.nombre.substring(0, 3).toUpperCase()}

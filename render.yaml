@@ -10,8 +10,4 @@ services:
       - key: CORS_ORIGINS
         value: "https://tu-frontend-en-vercel.vercel.app" # Reemplazar después con la URL real de Vercel
       - key: DATABASE_URL
-        value: "sqlite:////data/hotel.db"
-    disk:
-      name: hotel-db-data
-      mountPath: /data
-      sizeGB: 1
+        value: "sqlite:///./database/hotel.db"

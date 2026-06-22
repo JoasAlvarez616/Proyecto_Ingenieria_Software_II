@@ -10,8 +10,12 @@ load_dotenv()
 # URL de la base de datos
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./database/hotel.db")
 
+# SQLAlchemy 1.4+ requiere que la URL de PostgreSQL comience con postgresql:// en lugar de postgres://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 # --- Creación automática del directorio (profesional) ---
-# Extraer la ruta del archivo de la URL SQLite
+# Extraer la ruta del archivo de la URL SQLite solo si es SQLite
 if DATABASE_URL.startswith("sqlite:///"):
     db_path = DATABASE_URL.replace("sqlite:///", "")
     # Eliminar './' si existe al inicio
@@ -24,10 +28,13 @@ if DATABASE_URL.startswith("sqlite:///"):
         Path(db_dir).mkdir(parents=True, exist_ok=True)
 # -------------------------------------------------------
 
+# Argumentos de conexión específicos para SQLite
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+
 # Crear motor de la base de datos
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False},
+    connect_args=connect_args,
     echo=False  # Cambiar a True para ver SQL logs en desarrollo
 )
 

@@ -9,5 +9,3 @@ services:
         value: 3.10.13
       - key: CORS_ORIGINS
         value: "https://tu-frontend-en-vercel.vercel.app" # Reemplazar después con la URL real de Vercel
-      - key: DATABASE_URL
-        value: "sqlite:///./database/hotel.db"
